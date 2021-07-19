@@ -1,0 +1,26 @@
+---
+ - hosts: webserver
+   vars:
+     - web_package: httpd
+     - web_service: httpd
+     - firewall_package: firewalld
+     - firewall_service: firewalld
+     - web_port:
+     - git_repo_url: https://www.github.com/ramvish52/yogawebsite
+   tasks:
+     - name: install {{ web_package }} and {{ firewall_package }}
+       yum:
+         name: "{{ item }}"
+         state: present
+       with_items:
+         - "{{ web_package }}"
+         - "{{ firewall_package }}"      
+
+     - name: start {{ web_service }} and {{ firewall_servie }}
+       service:
+         name: "{{ item }}"
+         state: started
+         enabled: true 
+       with_items:
+         - "{{ web_service }}"
+         - "{{ firewall_service }}"      

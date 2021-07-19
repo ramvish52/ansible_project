@@ -1,0 +1,51 @@
+---
+ - hosts: webserver
+   vars:
+     web_package: 
+       - httpd
+       - git  
+     web_service: httpd
+     firewall_package: firewalld
+     firewall_service: firewalld
+     web_port:
+     git_repo_url: https://www.github.com/ramvish52/yoga-website.git
+   tasks:
+     - name: install {{ web_package }}
+       yum:
+         name: "{{ web_package }}"
+         state: present
+
+     - name: install {{ firewall_package }}
+       yum:
+         name: "{{ firewall_package }}"
+         state: present
+     
+     - name: start {{ web_service }} 
+       service:
+         name: "{{ web_service }}"
+         state: started
+         enabled: true
+
+     - name: start {{ firewall_service }}
+       service:
+         name: "{{ firewall_service }}"
+         state: started
+         enabled: true 
+
+     - name: clone git repository
+       git:
+         repo: "{{ git_repo_url }}"
+         dest: /var/www/html
+    
+     - name: restart {{ web_service }} 
+       service:
+         name: "{{ web_service }}"
+         state: restarted
+             
+     - name: allow port in firewall
+       firewalld:
+         port: 80/tcp
+         permanent: true
+         state: enabled
+         immediate: true
+             
